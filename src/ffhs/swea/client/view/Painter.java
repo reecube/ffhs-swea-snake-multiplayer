@@ -57,8 +57,8 @@ public class Painter {
         }
 
         // The score
-        gc.setFill(Color.BEIGE);
-        gc.fillText("Score : " + 100 * (snake.getPoints().size() - 1), 10, 490);
+        gc.setFill(Color.DARKGREEN);
+        gc.fillText("Length : " + (snake.getPoints().size() - 1), 10, grid.getHeight() - 15);
     }
 
     private static void paintPoint(Point point, GraphicsContext gc) {
@@ -66,7 +66,7 @@ public class Painter {
     }
 
     public static void paintResetMessage(GraphicsContext gc) {
-        gc.setFill(Color.AQUAMARINE);
-        gc.fillText("Hit RETURN to reset.", 10, 10);
+        gc.setFill(Color.DARKRED);
+        gc.fillText("Hit RETURN to reset.", 10, 15);
     }
 }

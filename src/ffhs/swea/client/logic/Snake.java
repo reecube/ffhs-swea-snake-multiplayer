@@ -36,8 +36,8 @@ import java.util.List;
  * @version 2016.12.17
  */
 public class Snake {
-    public static final Color COLOR = Color.CORNSILK;
-    public static final Color DEAD = Color.RED;
+    public static final Color COLOR = Color.GREEN;
+    public static final Color DEAD = Color.DARKGREEN;
     private Grid grid;
     private int length;
     private boolean safe;

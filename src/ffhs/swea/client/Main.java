@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -69,6 +70,8 @@ public class Main extends Application {
         root.getChildren().add(canvas);
 
         Scene scene = new Scene(root);
+
+        scene.setFill(new Color(0.1, 0.1, 0.1, 1));
 
         primaryStage.setResizable(false);
         primaryStage.setTitle("Snake");

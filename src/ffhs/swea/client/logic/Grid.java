@@ -38,7 +38,7 @@ public class Grid {
      * The side length of each square point in the grid.
      */
     public static final int SIZE = 10;
-    public static final Color COLOR = new Color(0.1, 0.1, 0.1, 1);
+    public static final Color COLOR = Color.LIGHTGREEN;
 
     private final int cols;     // The number of columns
     private final int rows;     // The number of rows

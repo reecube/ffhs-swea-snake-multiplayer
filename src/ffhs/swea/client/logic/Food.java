@@ -32,7 +32,7 @@ import javafx.scene.paint.Color;
  * @version 2016.12.17
  */
 public class Food {
-    public static final Color COLOR = Color.ROSYBROWN;
+    public static final Color COLOR = Color.DARKRED;
 
     private Point point;
 
