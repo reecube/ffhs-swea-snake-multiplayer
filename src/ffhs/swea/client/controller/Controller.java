@@ -35,6 +35,8 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
     private void reset() {
         game.reset();
         view.resetStage(game.getGrid());
+
+        loop.resume();
     }
 
     @Override
@@ -61,9 +63,10 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
             case ENTER:
                 if (loop.isPaused()) {
                     reset();
-                    loop.resume();
                 }
+                break;
         }
+
         loop.setKeyPressed();
     }
 

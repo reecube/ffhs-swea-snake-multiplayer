@@ -42,17 +42,19 @@ public class GameLoop implements Runnable {
 
         interval = 1000.0f / FRAME_RATE; // 1000 ms in a second
         running = true;
-        paused = false;
+        paused = true;
         keyIsPressed = false;
     }
 
     @Override
     public void run() {
-        while (running && !paused) {
+        while (running) {
             // Time the update and paint calls
             float time = System.currentTimeMillis();
 
-            caller.run();
+            if (!paused) {
+                caller.run();
+            }
 
             time = System.currentTimeMillis() - time;
 
@@ -65,10 +67,6 @@ public class GameLoop implements Runnable {
             }
             keyIsPressed = false;
         }
-    }
-
-    public void stop() {
-        running = false;
     }
 
     public boolean isKeyPressed() {
@@ -85,6 +83,7 @@ public class GameLoop implements Runnable {
 
     public void pause() {
         paused = true;
+        keyIsPressed = false;
     }
 
     public boolean isPaused() {
