@@ -34,8 +34,6 @@ import java.util.Random;
  * @version 2016.12.17
  */
 public class Grid {
-    public static final Color COLOR = Color.LIGHTGREEN;
-
     private final int rows;
     private final int cols;
 

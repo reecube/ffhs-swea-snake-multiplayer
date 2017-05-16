@@ -1,6 +1,5 @@
 package ffhs.swea.client.view;
 
-import ffhs.swea.client.logic.Food;
 import ffhs.swea.client.logic.Grid;
 import ffhs.swea.client.logic.Point;
 import ffhs.swea.client.logic.Snake;
@@ -15,12 +14,21 @@ import javafx.stage.Stage;
 
 public class View {
     private static final int POINT_SIZE = 10;
+
     private static final int LABEL_HEIGHT = 10;
     private static final int LABEL_OFFSET = LABEL_HEIGHT / 2;
+
+    private static final Color COLOR_GRID = Color.LIGHTGREEN;
+    private static final Color COLOR_FOOD = Color.DARKRED;
+    private static final Color COLOR_SNAKE = Color.GREEN;
+    private static final Color COLOR_SNAKE_DEAD = Color.DARKGREEN;
+    private static final Color COLOR_LABEL_SCORE = Color.DARKGREEN;
+    private static final Color COLOR_LABEL_GAME_OVER = Color.DARKRED;
 
     private Stage primaryStage;
 
     private Canvas canvas;
+    private GraphicsContext gc;
 
     public View(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -30,6 +38,7 @@ public class View {
         StackPane root = new StackPane();
 
         this.canvas = new Canvas(cols * POINT_SIZE, rows * POINT_SIZE);
+        this.gc = canvas.getGraphicsContext2D();
 
         root.getChildren().add(canvas);
 
@@ -60,39 +69,33 @@ public class View {
         int gridWidth = grid.getCols() * POINT_SIZE;
         int gridHeight = grid.getRows() * POINT_SIZE;
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Grid.COLOR);
+        gc.setFill(COLOR_GRID);
         gc.fillRect(0, 0, gridWidth, gridHeight);
 
         // Now the Food
-        gc.setFill(Food.COLOR);
+        gc.setFill(COLOR_FOOD);
         paintPoint(grid.getFood().getPoint());
 
         // Now the snake
         Snake snake = grid.getSnake();
-        gc.setFill(Snake.COLOR);
+        gc.setFill(COLOR_SNAKE);
         snake.getPoints().forEach(this::paintPoint);
         if (!snake.isSafe()) {
-            gc.setFill(Snake.DEAD);
+            gc.setFill(COLOR_SNAKE_DEAD);
             paintPoint(snake.getHead());
         }
 
         // The score
-        gc.setFill(Color.DARKGREEN);
+        gc.setFill(COLOR_LABEL_SCORE);
         gc.fillText("Length : " + (snake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
     }
 
     private void paintPoint(Point point) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
         gc.fillRect(point.getX() * POINT_SIZE, point.getY() * POINT_SIZE, POINT_SIZE, POINT_SIZE);
     }
 
     public void paintResetMessage() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.DARKRED);
+        gc.setFill(COLOR_LABEL_GAME_OVER);
         gc.fillText("Hit RETURN to reset.", POINT_SIZE, POINT_SIZE + LABEL_OFFSET);
     }
 }

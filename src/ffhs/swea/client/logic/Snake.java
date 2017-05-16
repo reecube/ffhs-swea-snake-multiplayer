@@ -23,8 +23,6 @@
 
 package ffhs.swea.client.logic;
 
-import javafx.scene.paint.Color;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,8 +34,6 @@ import java.util.List;
  * @version 2016.12.17
  */
 public class Snake {
-    public static final Color COLOR = Color.GREEN;
-    public static final Color DEAD = Color.DARKGREEN;
     private Grid grid;
     private int length;
     private boolean safe;
