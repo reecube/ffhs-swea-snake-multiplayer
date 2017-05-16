@@ -21,9 +21,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package astrobleme.logic;
+package ffhs.swea.client.logic;
 
-import astrobleme.gui.Painter;
+import ffhs.swea.client.view.Painter;
 import javafx.scene.canvas.GraphicsContext;
 
 /**

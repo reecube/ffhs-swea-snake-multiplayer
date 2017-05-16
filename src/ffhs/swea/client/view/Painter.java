@@ -21,16 +21,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package astrobleme.gui;
+package ffhs.swea.client.view;
 
-import astrobleme.logic.Food;
-import astrobleme.logic.Grid;
-import astrobleme.logic.Point;
-import astrobleme.logic.Snake;
+import ffhs.swea.client.logic.Food;
+import ffhs.swea.client.logic.Grid;
+import ffhs.swea.client.logic.Point;
+import ffhs.swea.client.logic.Snake;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import static astrobleme.logic.Grid.SIZE;
+import static ffhs.swea.client.logic.Grid.SIZE;
 
 /**
  * @author Subhomoy Haldar

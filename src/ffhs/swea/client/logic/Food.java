@@ -21,7 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package astrobleme.logic;
+package ffhs.swea.client.logic;
 
 import javafx.scene.paint.Color;
 

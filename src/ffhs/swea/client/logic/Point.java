@@ -21,7 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package astrobleme.logic;
+package ffhs.swea.client.logic;
 
 /**
  * A simple Point class to store two coordinates.
