@@ -1,5 +1,6 @@
-Frontend-logic and client-logic copied and modified from: https://github.com/Subh0m0y/Snake
+Frontend-logic and client-logic based on: https://github.com/Subh0m0y/Snake
 
+`LICENSE`:
 ```
 The MIT License (MIT)
 Copyright (c) 2016-2017 Subhomoy Haldar
