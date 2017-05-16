@@ -5,6 +5,7 @@ import ffhs.swea.server.model.Food;
 import ffhs.swea.server.model.Grid;
 import ffhs.swea.server.model.Point;
 import ffhs.swea.server.model.Snake;
+import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,5 +103,31 @@ public class Game implements Runnable {
     public void removePlayer(int playerKey) {
         grid.removeSnake(playerKey);
         grid.removeFood();
+    }
+
+    public void onKeyPress(int hashCode, KeyCode keyCode) {
+        Snake snake = grid.getSnakes().getOrDefault(hashCode, null);
+
+        if (snake == null) {
+            return;
+        }
+
+        switch (keyCode) {
+            case UP:
+                snake.setUp();
+                break;
+            case DOWN:
+                snake.setDown();
+                break;
+            case LEFT:
+                snake.setLeft();
+                break;
+            case RIGHT:
+                snake.setRight();
+                break;
+            case ENTER:
+                // TODO
+                break;
+        }
     }
 }

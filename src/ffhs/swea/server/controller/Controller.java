@@ -4,6 +4,7 @@ import ffhs.swea.global.ConnectionListener;
 import ffhs.swea.global.model.UpdateObject;
 import ffhs.swea.server.logic.Game;
 import ffhs.swea.global.Connection;
+import javafx.scene.input.KeyCode;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -79,8 +80,12 @@ public class Controller implements ConnectionListener {
 
     @Override
     public void onObject(Connection connection, Object object) {
-        System.out.println(object);
-        System.out.println(object.getClass());
+        if (!(object instanceof KeyCode)) {
+            System.err.println("`" + object.getClass() + "` is not a valid `" + KeyCode.class + "` object!");
+            return;
+        }
+
+        game.onKeyPress(connection.hashCode(), (KeyCode) object);
     }
 
     @Override

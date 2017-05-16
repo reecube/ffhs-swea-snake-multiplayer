@@ -51,22 +51,10 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
 
     @Override
     public void handle(KeyEvent event) {
-        switch (event.getCode()) {
-            case UP:
-                // TODO
-                break;
-            case DOWN:
-                // TODO
-                break;
-            case LEFT:
-                // TODO
-                break;
-            case RIGHT:
-                // TODO
-                break;
-            case ENTER:
-                // TODO
-                break;
+        try {
+            connection.sendObject(event.getCode());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
