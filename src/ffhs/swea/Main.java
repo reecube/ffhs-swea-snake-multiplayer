@@ -1,4 +1,4 @@
-package sample;
+package ffhs.swea;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

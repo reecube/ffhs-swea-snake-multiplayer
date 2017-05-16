@@ -1,4 +1,4 @@
-package sample;
+package ffhs.swea;
 
 public class Controller {
 }
