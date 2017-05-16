@@ -1,22 +1,18 @@
 package ffhs.swea.global;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.net.Socket;
 
 public class Connection implements Runnable {
-    private final static String KEY_TYPE = "type";
-    private final static String KEY_DATA = "data";
-
-    private final static String TYPE_MESSAGE = "message";
-    private final static String TYPE_OBJECT = "object";
-
     private ConnectionListener listener;
     private Socket clientSocket;
     private BufferedWriter writer;
     private BufferedReader reader;
+
+    private Gson gson;
 
     public Connection(ConnectionListener listener, Socket clientSocket) throws Exception {
         this.listener = listener;
@@ -24,54 +20,43 @@ public class Connection implements Runnable {
         this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+        this.gson = new GsonBuilder().create();
+
         (new Thread(this)).start();
     }
 
     public void sendMessage(String message) throws Exception {
-        writeObject(TYPE_MESSAGE, message);
+        writeObject(ConnectionMessageType.MESSAGE, message);
     }
 
-    public void sendObject(JSONObject object) throws Exception {
-        writeObject(TYPE_OBJECT, object);
+    public void sendObject(Object object) throws Exception {
+        writeObject(ConnectionMessageType.OBJECT, object);
     }
 
-    @SuppressWarnings("unchecked")
-    private void writeObject(String type, Object object) throws Exception {
+    private void writeObject(ConnectionMessageType type, Object object) throws Exception {
         if (!clientSocket.isConnected()) {
             System.err.println("Could not send `" + object + "`!");
             return;
         }
 
-        JSONObject jsonObject = new JSONObject();
+        ConnectionMessage cm = new ConnectionMessage(type, object.getClass(), gson.toJson(object));
 
-        jsonObject.put(KEY_TYPE, type);
-        jsonObject.put(KEY_DATA, object);
-
-        writer.write(jsonObject.toJSONString() + '\n');
+        writer.write(gson.toJson(cm) + '\n');
         writer.flush();
     }
 
-    @SuppressWarnings("unchecked")
     public void run() {
         try {
-            JSONParser parser = new JSONParser();
-
             String message;
             while ((message = reader.readLine()) != null) {
-                JSONObject object = (JSONObject) parser.parse(message);
-                Object type = object.getOrDefault(KEY_TYPE, null);
-                Object data = object.getOrDefault(KEY_DATA, null);
+                ConnectionMessage cm = gson.fromJson(message, ConnectionMessage.class);
 
-                if (type == null || data == null) {
-                    continue;
-                }
-
-                switch (type.toString()) {
-                    case TYPE_MESSAGE:
-                        listener.onMessage(this, data.toString());
+                switch (cm.getType()) {
+                    case MESSAGE:
+                        listener.onMessage(this, gson.fromJson(cm.getDataJson(), cm.getDataClass()).toString());
                         break;
-                    case TYPE_OBJECT:
-                        listener.onObject(this, (JSONObject) data);
+                    case OBJECT:
+                        listener.onObject(this, gson.fromJson(cm.getDataJson(), cm.getDataClass()));
                         break;
                     default:
                         listener.onError(this, message);
@@ -84,3 +69,33 @@ public class Connection implements Runnable {
         }
     }
 }
+
+class ConnectionMessage {
+    private ConnectionMessageType type;
+    private String dataClass;
+    private String dataJson;
+
+    ConnectionMessage(ConnectionMessageType type, Class<?> dataClass, String dataJson) {
+        this.type = type;
+        this.dataClass = dataClass.toString().substring(6);
+        this.dataJson = dataJson;
+    }
+
+    ConnectionMessageType getType() {
+        return type;
+    }
+
+    Class<?> getDataClass() throws ClassNotFoundException {
+        return Class.forName(dataClass);
+    }
+
+    String getDataJson() {
+        return dataJson;
+    }
+}
+
+enum ConnectionMessageType {
+    MESSAGE,
+    OBJECT
+}
+

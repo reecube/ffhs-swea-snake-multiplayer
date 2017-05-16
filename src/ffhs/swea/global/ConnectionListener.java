@@ -1,11 +1,9 @@
 package ffhs.swea.global;
 
-import org.json.simple.JSONObject;
-
 public interface ConnectionListener {
-    void onObject(Connection connection, JSONObject object);
+    void onObject(Connection connection, Object object);
 
-    void onMessage(Connection connection, String message);
+    void onMessage(Connection connection, String json);
 
     void onError(Connection connection, String text);
 

@@ -6,6 +6,7 @@ import ffhs.swea.server.model.Grid;
 import ffhs.swea.server.model.Point;
 import ffhs.swea.server.model.Snake;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -38,6 +39,20 @@ public class Game implements Runnable {
         return new Point(x, y);
     }
 
+    private Point getRandomPoint() {
+        List<Point> points = new ArrayList<>();
+
+        for (Snake snake : grid.getSnakes().values()) {
+            points.addAll(snake.getPoints());
+        }
+
+        for (Food food : grid.getFoods()) {
+            points.add(food.getPoint());
+        }
+
+        return getRandomPoint(points);
+    }
+
     private Point getRandomPoint(List<Point> points) {
         Random random = new Random();
         Point point;
@@ -64,8 +79,8 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        for (Snake snake:grid.getSnakes().values()) {
-            for (Food food:grid.getFoods()) {
+        for (Snake snake : grid.getSnakes().values()) {
+            for (Food food : grid.getFoods()) {
                 if (food.getPoint().equals(snake.getHead())) {
                     extendSnake(snake);
                     food.setPoint(getRandomPoint(snake.getPoints()));
@@ -77,5 +92,15 @@ public class Game implements Runnable {
         }
 
         controller.afterUpdate();
+    }
+
+    public void addPlayer(int playerKey) {
+        grid.addSnake(playerKey, new Snake(getRandomPoint()));
+        grid.addFood(new Food(getRandomPoint()));
+    }
+
+    public void removePlayer(int playerKey) {
+        grid.removeSnake(playerKey);
+        grid.removeFood();
     }
 }

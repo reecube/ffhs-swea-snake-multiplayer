@@ -1,10 +1,9 @@
 package ffhs.swea.server.controller;
 
-import ffhs.swea.global.CommunicationInterface;
 import ffhs.swea.global.ConnectionListener;
+import ffhs.swea.global.model.UpdateObject;
 import ffhs.swea.server.logic.Game;
 import ffhs.swea.global.Connection;
-import org.json.simple.JSONObject;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,10 +34,7 @@ public class Controller implements ConnectionListener {
             try {
                 Connection client = new Connection(this, clientSocket);
 
-                initializeClient(client);
-                updateClient(client);
-
-                clients.put(client.hashCode(), client);
+                connectClient(client);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -50,45 +46,46 @@ public class Controller implements ConnectionListener {
         System.out.println(message);
     }
 
-    @SuppressWarnings("unchecked")
-    private void initializeClient(Connection client) throws Exception {
-        JSONObject jsonObject = new JSONObject();
+    private void connectClient(Connection client) throws Exception {
+        initializeClient(client);
+        updateClient(client);
 
-        jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_START);
-        jsonObject.put(CommunicationInterface.DATA_KEY_COLS, game.getGrid().getCols());
-        jsonObject.put(CommunicationInterface.DATA_KEY_ROWS, game.getGrid().getRows());
+        int clientHashCode = client.hashCode();
 
-        client.sendObject(jsonObject);
+        clients.put(clientHashCode, client);
+
+        game.addPlayer(clientHashCode);
 
         log(client, "connected");
     }
 
-    private void updateClient(Connection client) throws Exception {
-        updateClient(client, null);
+    private void disconnectClient(Connection client) throws Exception {
+        int clientHashCode = client.hashCode();
+
+        clients.remove(clientHashCode);
+
+        game.removePlayer(clientHashCode);
+
+        log(client, "disconnected");
     }
 
-    @SuppressWarnings("unchecked")
-    private void updateClient(Connection client, JSONObject jsonObject) throws Exception {
-        if (jsonObject == null) {
-            jsonObject = new JSONObject();
-            jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_UPDATE);
-            jsonObject.put(CommunicationInterface.DATA_KEY_SNAKES, game.getGrid().getSnakes());
-            jsonObject.put(CommunicationInterface.DATA_KEY_FOODS, game.getGrid().getFoods());
-        }
+    private void initializeClient(Connection client) throws Exception {
+        client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
+    }
 
-        jsonObject.put(CommunicationInterface.DATA_KEY_SNAKE_KEY, client.hashCode());
-
-        client.sendObject(jsonObject);
+    private void updateClient(Connection client) throws Exception {
+        client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
     }
 
     @Override
-    public void onObject(Connection connection, JSONObject object) {
-        System.out.println(connection.hashCode() + ": " + object.toJSONString());
+    public void onObject(Connection connection, Object object) {
+        System.out.println(object);
+        System.out.println(object.getClass());
     }
 
     @Override
     public void onMessage(Connection connection, String message) {
-        log(connection, message);
+        System.out.println(message);
     }
 
     @Override
@@ -98,21 +95,19 @@ public class Controller implements ConnectionListener {
 
     @Override
     public void onException(Connection connection, Exception ex) {
-        System.out.println(connection.hashCode() + ": disconnected [" + ex.getMessage() + "]");
+        System.err.println(connection.hashCode() + ": " + ex.getMessage());
 
-        clients.remove(connection.hashCode());
+        try {
+            disconnectClient(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @SuppressWarnings("unchecked")
     public void afterUpdate() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_UPDATE);
-        jsonObject.put(CommunicationInterface.DATA_KEY_SNAKES, game.getGrid().getSnakes());
-        jsonObject.put(CommunicationInterface.DATA_KEY_FOODS, game.getGrid().getFoods());
-
         for (Connection connection : clients.values()) {
             try {
-                updateClient(connection, jsonObject);
+                updateClient(connection);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

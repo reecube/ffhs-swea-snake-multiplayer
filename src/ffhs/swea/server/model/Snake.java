@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Snake {
-    private boolean safe;
+    private transient boolean safe;
     private List<Point> points;
-    private Point head;
-    private int xVelocity;
-    private int yVelocity;
+    private transient Point head;
+    private transient int xVelocity;
+    private transient int yVelocity;
 
     public Snake(Point initialPoint) {
         points = new LinkedList<>();

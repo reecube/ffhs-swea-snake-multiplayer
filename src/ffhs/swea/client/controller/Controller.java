@@ -4,24 +4,23 @@ import ffhs.swea.client.view.View;
 import ffhs.swea.global.CommunicationInterface;
 import ffhs.swea.global.Connection;
 import ffhs.swea.global.ConnectionListener;
+import ffhs.swea.global.model.UpdateObject;
 import ffhs.swea.server.model.Grid;
+import ffhs.swea.server.model.Snake;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import org.json.simple.JSONObject;
 
 import java.net.Socket;
 
 public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
     private Connection connection;
-    private Grid grid;
     private boolean started;
     private View view;
 
     public Controller(Stage primaryStage, String host, int port) throws Exception {
         this.connection = new Connection(this, new Socket(host, port));
-        this.grid = null;
         this.started = false;
         this.view = new View(primaryStage);
     }
@@ -30,11 +29,7 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
         connection.sendMessage(CommunicationInterface.CLIENT_DISCONNECT);
     }
 
-    private void start() {
-        if (grid == null) {
-            throw new NullPointerException("The grid must not be null!");
-        }
-
+    private void start(Grid grid) {
         if (started) {
             System.err.println("You can't start the view multiple times!");
             return;
@@ -48,6 +43,10 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
 
             view.showStage();
         });
+    }
+
+    private void update(Grid grid) {
+        Platform.runLater(() -> view.paint(grid));
     }
 
     @Override
@@ -71,48 +70,28 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
         }
     }
 
-    private void update() {
-        Platform.runLater(() -> view.paint(grid));
-    }
-
     @Override
-    @SuppressWarnings("unchecked")
-    public void onObject(Connection connection, JSONObject object) {
-        Object type = object.getOrDefault(CommunicationInterface.DATA_KEY_TYPE, null);
-
-        if (type == null) {
-            System.err.println("Could not parse `" + object.toJSONString() + "`!");
+    public void onObject(Connection connection, Object object) {
+        if (!(object instanceof UpdateObject)) {
+            System.err.println("`" + object.getClass() + "` is not a valid `" + UpdateObject.class + "` object!");
             return;
         }
 
-        switch (type.toString()) {
-            case CommunicationInterface.DATA_TYPE_START:
-                int cols = Integer.parseInt(object.getOrDefault(CommunicationInterface.DATA_KEY_COLS, 0).toString());
-                int rows = Integer.parseInt(object.getOrDefault(CommunicationInterface.DATA_KEY_ROWS, 0).toString());
+        UpdateObject updateObject = (UpdateObject) object;
 
-                // TODO: handle <= 0
+        Grid grid = updateObject.getGrid();
 
-                this.grid = new Grid(cols, rows);
+        if (started) {
+            Snake playerSnake = grid.getSnakes().getOrDefault(updateObject.getHashCode(), null);
 
-                start();
+            if (playerSnake != null) {
+                grid.setPlayerSnake(playerSnake);
+            }
 
-                break;
-            case CommunicationInterface.DATA_TYPE_UPDATE:
-                // TODO: overwrite the variables
-
-                Object objSnakeKey = object.getOrDefault(CommunicationInterface.DATA_KEY_SNAKE_KEY, null);
-                Object objSnakes = object.getOrDefault(CommunicationInterface.DATA_KEY_SNAKES, null);
-                Object objFoods = object.getOrDefault(CommunicationInterface.DATA_KEY_FOODS, null);
-
-                System.out.println(objSnakeKey);
-                System.out.println(objSnakes);
-                System.out.println(objFoods);
-
-//                update();
-
-                break;
-            default:
-                System.err.println("Could not parse `" + object.toJSONString() + "`!");
+            update(grid);
+        } else {
+            start(grid);
+            update(grid);
         }
     }
 
