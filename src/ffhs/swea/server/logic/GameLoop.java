@@ -35,15 +35,13 @@ public class GameLoop implements Runnable {
     private float interval;
     private boolean running;
     private boolean paused;
-    private boolean keyIsPressed;
 
-    public GameLoop(Runnable caller) {
+    GameLoop(Runnable caller) {
         this.caller = caller;
 
         interval = 1000.0f / FRAME_RATE; // 1000 ms in a second
         running = true;
-        paused = true;
-        keyIsPressed = false;
+        paused = false;
     }
 
     @Override
@@ -65,28 +63,6 @@ public class GameLoop implements Runnable {
                 } catch (InterruptedException ignore) {
                 }
             }
-            keyIsPressed = false;
         }
-    }
-
-    public boolean isKeyPressed() {
-        return keyIsPressed;
-    }
-
-    public void setKeyPressed() {
-        keyIsPressed = true;
-    }
-
-    public void resume() {
-        paused = false;
-    }
-
-    public void pause() {
-        paused = true;
-        keyIsPressed = false;
-    }
-
-    public boolean isPaused() {
-        return paused;
     }
 }
