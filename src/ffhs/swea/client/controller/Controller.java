@@ -1,8 +1,8 @@
 package ffhs.swea.client.controller;
 
 import ffhs.swea.client.logic.GameLoop;
-import ffhs.swea.client.logic.Grid;
-import ffhs.swea.client.logic.Snake;
+import ffhs.swea.client.model.Grid;
+import ffhs.swea.client.model.Snake;
 import ffhs.swea.client.view.View;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
@@ -60,7 +60,6 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
                 }
         }
     }
-
 
     @Override
     public void run() {

@@ -1,8 +1,8 @@
 package ffhs.swea.client.view;
 
-import ffhs.swea.client.logic.Grid;
-import ffhs.swea.client.logic.Point;
-import ffhs.swea.client.logic.Snake;
+import ffhs.swea.client.model.Grid;
+import ffhs.swea.client.model.Point;
+import ffhs.swea.client.model.Snake;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
