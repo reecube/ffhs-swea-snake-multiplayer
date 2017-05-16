@@ -30,18 +30,21 @@ import ffhs.swea.client.logic.Snake;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import static ffhs.swea.client.logic.Grid.SIZE;
-
 /**
  * @author Subhomoy Haldar
  * @version 2016.12.17
  */
 public class Painter {
-
+    public static final int POINT_SIZE = 10;
+    private static final int LABEL_HEIGHT = 10;
+    private static final int LABEL_OFFSET = LABEL_HEIGHT / 2;
 
     public static void paint(Grid grid, GraphicsContext gc) {
+        int gridWidth = grid.getCols() * POINT_SIZE;
+        int gridHeight = grid.getRows() * POINT_SIZE;
+
         gc.setFill(Grid.COLOR);
-        gc.fillRect(0, 0, grid.getWidth() * Grid.SIZE, grid.getHeight() * Grid.SIZE);
+        gc.fillRect(0, 0, gridWidth, gridHeight);
 
         // Now the Food
         gc.setFill(Food.COLOR);
@@ -58,15 +61,15 @@ public class Painter {
 
         // The score
         gc.setFill(Color.DARKGREEN);
-        gc.fillText("Length : " + (snake.getPoints().size() - 1), 10, grid.getHeight() - 15);
+        gc.fillText("Length : " + (snake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
     }
 
     private static void paintPoint(Point point, GraphicsContext gc) {
-        gc.fillRect(point.getX() * SIZE, point.getY() * SIZE, SIZE, SIZE);
+        gc.fillRect(point.getX() * POINT_SIZE, point.getY() * POINT_SIZE, POINT_SIZE, POINT_SIZE);
     }
 
     public static void paintResetMessage(GraphicsContext gc) {
         gc.setFill(Color.DARKRED);
-        gc.fillText("Hit RETURN to reset.", 10, 15);
+        gc.fillText("Hit RETURN to reset.", POINT_SIZE, POINT_SIZE + LABEL_OFFSET);
     }
 }

@@ -34,24 +34,20 @@ import java.util.Random;
  * @version 2016.12.17
  */
 public class Grid {
-    /**
-     * The side length of each square point in the grid.
-     */
-    public static final int SIZE = 10;
     public static final Color COLOR = Color.LIGHTGREEN;
 
-    private final int cols;
     private final int rows;
+    private final int cols;
 
     private Snake snake;
     private Food food;
 
-    public Grid(int width, int height) {
-        rows = width;
-        cols = height;
+    public Grid(int cols, int rows) {
+        this.cols = cols;
+        this.rows = rows;
 
         // initialize the snake at the centre of the screen
-        snake = new Snake(this, new Point(rows / 2, cols / 2));
+        snake = new Snake(this, new Point(this.cols / 2, this.rows / 2));
 
         // put the food at a random location
         food = new Food(getRandomPoint());
@@ -60,10 +56,10 @@ public class Grid {
     Point wrap(Point point) {
         int x = point.getX();
         int y = point.getY();
-        if (x >= rows) x = 0;
-        if (y >= cols) y = 0;
-        if (x < 0) x = rows - 1;
-        if (y < 0) y = cols - 1;
+        if (x >= cols) x = 0;
+        if (y >= rows) y = 0;
+        if (x < 0) x = cols - 1;
+        if (y < 0) y = rows - 1;
         return new Point(x, y);
     }
 
@@ -71,7 +67,7 @@ public class Grid {
         Random random = new Random();
         Point point;
         do {
-            point = new Point(random.nextInt(rows), random.nextInt(cols));
+            point = new Point(random.nextInt(cols), random.nextInt(rows));
         } while (snake.getPoints().contains(point));
         return point;
     }
@@ -88,19 +84,19 @@ public class Grid {
         }
     }
 
-    public double getWidth() {
-        return rows * SIZE;
-    }
-
-    public double getHeight() {
-        return cols * SIZE;
-    }
-
     public Snake getSnake() {
         return snake;
     }
 
     public Food getFood() {
         return food;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
     }
 }
