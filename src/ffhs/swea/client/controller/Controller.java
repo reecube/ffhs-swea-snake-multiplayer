@@ -100,7 +100,15 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
             case CommunicationInterface.DATA_TYPE_UPDATE:
                 // TODO: overwrite the variables
 
-                update();
+                Object objSnakeKey = object.getOrDefault(CommunicationInterface.DATA_KEY_SNAKE_KEY, null);
+                Object objSnakes = object.getOrDefault(CommunicationInterface.DATA_KEY_SNAKES, null);
+                Object objFoods = object.getOrDefault(CommunicationInterface.DATA_KEY_FOODS, null);
+
+                System.out.println(objSnakeKey);
+                System.out.println(objSnakes);
+                System.out.println(objFoods);
+
+//                update();
 
                 break;
             default:

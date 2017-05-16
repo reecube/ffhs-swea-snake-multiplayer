@@ -14,11 +14,13 @@ public class Connection implements Runnable {
     private final static String TYPE_OBJECT = "object";
 
     private ConnectionListener listener;
+    private Socket clientSocket;
     private BufferedWriter writer;
     private BufferedReader reader;
 
     public Connection(ConnectionListener listener, Socket clientSocket) throws Exception {
         this.listener = listener;
+        this.clientSocket = clientSocket;
         this.writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -35,6 +37,11 @@ public class Connection implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void writeObject(String type, Object object) throws Exception {
+        if (!clientSocket.isConnected()) {
+            System.err.println("Could not send `" + object + "`!");
+            return;
+        }
+
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put(KEY_TYPE, type);

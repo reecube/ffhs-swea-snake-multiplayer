@@ -8,15 +8,18 @@ import org.json.simple.JSONObject;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class Controller implements ConnectionListener {
     private int port;
 
     private Game game;
+    private HashMap<Integer, Connection> clients;
 
     public Controller(int port, int cols, int rows) {
         this.port = port;
-        this.game = new Game(cols, rows);
+        this.game = new Game(this, cols, rows);
+        this.clients = new HashMap<>();
     }
 
     public void start() throws Exception {
@@ -28,10 +31,17 @@ public class Controller implements ConnectionListener {
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            Connection client = new Connection(this, clientSocket);
 
-            initializeClient(client);
-            updateClient(client);
+            try {
+                Connection client = new Connection(this, clientSocket);
+
+                initializeClient(client);
+                updateClient(client);
+
+                clients.put(client.hashCode(), client);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -53,14 +63,20 @@ public class Controller implements ConnectionListener {
         log(client, "connected");
     }
 
-    @SuppressWarnings("unchecked")
     private void updateClient(Connection client) throws Exception {
-        JSONObject jsonObject = new JSONObject();
+        updateClient(client, null);
+    }
 
-        jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_UPDATE);
+    @SuppressWarnings("unchecked")
+    private void updateClient(Connection client, JSONObject jsonObject) throws Exception {
+        if (jsonObject == null) {
+            jsonObject = new JSONObject();
+            jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_UPDATE);
+            jsonObject.put(CommunicationInterface.DATA_KEY_SNAKES, game.getGrid().getSnakes());
+            jsonObject.put(CommunicationInterface.DATA_KEY_FOODS, game.getGrid().getFoods());
+        }
+
         jsonObject.put(CommunicationInterface.DATA_KEY_SNAKE_KEY, client.hashCode());
-        jsonObject.put(CommunicationInterface.DATA_KEY_SNAKES, game.getGrid().getSnakes());
-        jsonObject.put(CommunicationInterface.DATA_KEY_FOODS, game.getGrid().getFoods());
 
         client.sendObject(jsonObject);
     }
@@ -83,5 +99,23 @@ public class Controller implements ConnectionListener {
     @Override
     public void onException(Connection connection, Exception ex) {
         System.out.println(connection.hashCode() + ": disconnected [" + ex.getMessage() + "]");
+
+        clients.remove(connection.hashCode());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void afterUpdate() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(CommunicationInterface.DATA_KEY_TYPE, CommunicationInterface.DATA_TYPE_UPDATE);
+        jsonObject.put(CommunicationInterface.DATA_KEY_SNAKES, game.getGrid().getSnakes());
+        jsonObject.put(CommunicationInterface.DATA_KEY_FOODS, game.getGrid().getFoods());
+
+        for (Connection connection : clients.values()) {
+            try {
+                updateClient(connection, jsonObject);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

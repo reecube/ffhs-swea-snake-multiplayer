@@ -1,5 +1,6 @@
 package ffhs.swea.server.logic;
 
+import ffhs.swea.server.controller.Controller;
 import ffhs.swea.server.model.Food;
 import ffhs.swea.server.model.Grid;
 import ffhs.swea.server.model.Point;
@@ -9,10 +10,12 @@ import java.util.List;
 import java.util.Random;
 
 public class Game implements Runnable {
+    private Controller controller;
     private GameLoop loop;
     private Grid grid;
 
-    public Game(int cols, int rows) {
+    public Game(Controller controller, int cols, int rows) {
+        this.controller = controller;
         this.loop = new GameLoop(this);
         this.grid = new Grid(cols, rows);
     }
@@ -72,5 +75,7 @@ public class Game implements Runnable {
                 }
             }
         }
+
+        controller.afterUpdate();
     }
 }
