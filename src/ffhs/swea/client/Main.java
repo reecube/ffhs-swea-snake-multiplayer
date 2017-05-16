@@ -20,8 +20,8 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private static final int WIDTH = 500;
-    private static final int HEIGHT = 500;
+    private static final int WIDTH = 50;
+    private static final int HEIGHT = 30;
 
     private GameLoop loop;
     private Grid grid;
@@ -34,7 +34,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         StackPane root = new StackPane();
-        Canvas canvas = new Canvas(WIDTH, HEIGHT);
+        Canvas canvas = new Canvas(WIDTH * Grid.SIZE, HEIGHT * Grid.SIZE);
         context = canvas.getGraphicsContext2D();
 
         canvas.setFocusTraversable(true);

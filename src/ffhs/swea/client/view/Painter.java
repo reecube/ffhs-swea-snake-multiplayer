@@ -41,7 +41,7 @@ public class Painter {
 
     public static void paint(Grid grid, GraphicsContext gc) {
         gc.setFill(Grid.COLOR);
-        gc.fillRect(0, 0, grid.getWidth(), grid.getHeight());
+        gc.fillRect(0, 0, grid.getWidth() * Grid.SIZE, grid.getHeight() * Grid.SIZE);
 
         // Now the Food
         gc.setFill(Food.COLOR);

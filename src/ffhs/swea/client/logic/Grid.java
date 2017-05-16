@@ -40,15 +40,15 @@ public class Grid {
     public static final int SIZE = 10;
     public static final Color COLOR = Color.LIGHTGREEN;
 
-    private final int cols;     // The number of columns
-    private final int rows;     // The number of rows
+    private final int cols;
+    private final int rows;
 
     private Snake snake;
     private Food food;
 
-    public Grid(final double width, final double height) {
-        rows = (int) width / SIZE;
-        cols = (int) height / SIZE;
+    public Grid(int width, int height) {
+        rows = width;
+        cols = height;
 
         // initialize the snake at the centre of the screen
         snake = new Snake(this, new Point(rows / 2, cols / 2));
@@ -86,14 +86,6 @@ public class Grid {
         } else {
             snake.move();
         }
-    }
-
-    public int getCols() {
-        return cols;
-    }
-
-    public int getRows() {
-        return rows;
     }
 
     public double getWidth() {
