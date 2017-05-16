@@ -23,26 +23,23 @@
 
 package ffhs.swea.client.logic;
 
-import ffhs.swea.client.view.Painter;
-import javafx.scene.canvas.GraphicsContext;
-
 /**
  * @author Subhomoy Haldar
  * @version 2016.12.17
  */
 public class GameLoop implements Runnable {
-    public static final int FRAME_RATE = 20;
+    private static final int FRAME_RATE = 20;
 
-    private final Grid grid;
-    private final GraphicsContext context;
+    private Runnable caller;
+
     private float interval;
     private boolean running;
     private boolean paused;
     private boolean keyIsPressed;
 
-    public GameLoop(final Grid grid, final GraphicsContext context) {
-        this.grid = grid;
-        this.context = context;
+    public GameLoop(Runnable caller) {
+        this.caller = caller;
+
         interval = 1000.0f / FRAME_RATE; // 1000 ms in a second
         running = true;
         paused = false;
@@ -55,14 +52,7 @@ public class GameLoop implements Runnable {
             // Time the update and paint calls
             float time = System.currentTimeMillis();
 
-            grid.update();
-            Painter.paint(grid, context);
-
-            if (!grid.getSnake().isSafe()) {
-                pause();
-                Painter.paintResetMessage(context);
-                break;
-            }
+            caller.run();
 
             time = System.currentTimeMillis() - time;
 

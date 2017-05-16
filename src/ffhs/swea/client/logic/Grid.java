@@ -46,6 +46,10 @@ public class Grid {
         this.cols = cols;
         this.rows = rows;
 
+        reset();
+    }
+
+    public void reset() {
         // initialize the snake at the centre of the screen
         snake = new Snake(this, new Point(this.cols / 2, this.rows / 2));
 
@@ -75,7 +79,7 @@ public class Grid {
     /**
      * This method is called in every cycle of execution.
      */
-    void update() {
+    public void update() {
         if (food.getPoint().equals(snake.getHead())) {
             snake.extend();
             food.setPoint(getRandomPoint());
