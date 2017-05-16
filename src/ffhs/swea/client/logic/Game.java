@@ -16,8 +16,7 @@ public class Game {
     }
 
     public void reset() {
-        grid.setSnake(new Snake(new Point(grid.getCols() / 2, grid.getRows() / 2)));
-        grid.setFood(new Food(getRandomPoint()));
+        grid.reset(new Point(grid.getCols() / 2, grid.getRows() / 2), getRandomPoint());
     }
 
     private Point wrap(Point point) {

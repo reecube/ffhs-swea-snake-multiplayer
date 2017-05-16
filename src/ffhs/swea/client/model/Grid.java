@@ -12,6 +12,11 @@ public class Grid {
         this.rows = rows;
     }
 
+    public void reset(Point snake, Point food) {
+        this.snake = new Snake(snake);
+        this.food = new Food(food);
+    }
+
     public int getRows() {
         return rows;
     }
@@ -24,15 +29,7 @@ public class Grid {
         return snake;
     }
 
-    public void setSnake(Snake snake) {
-        this.snake = snake;
-    }
-
     public Food getFood() {
         return food;
-    }
-
-    public void setFood(Food food) {
-        this.food = food;
     }
 }
