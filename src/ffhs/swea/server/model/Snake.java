@@ -6,7 +6,7 @@ import java.util.List;
 public class Snake {
     private transient boolean safe;
     private List<Point> points;
-    private transient Point head;
+    private Point head;
     private transient int xVelocity;
     private transient int yVelocity;
 
