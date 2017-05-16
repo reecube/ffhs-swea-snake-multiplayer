@@ -40,9 +40,6 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
     @Override
     public void handle(KeyEvent event) {
         Snake snake = grid.getSnake();
-        if (loop.isKeyPressed()) {
-            return;
-        }
         switch (event.getCode()) {
             case UP:
                 snake.setUp();
@@ -62,7 +59,6 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
                     loop.resume();
                 }
         }
-        loop.setKeyPressed();
     }
 
 
