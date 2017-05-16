@@ -21,7 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package ffhs.swea.client.logic;
+package ffhs.swea.server.logic;
 
 /**
  * @author Subhomoy Haldar

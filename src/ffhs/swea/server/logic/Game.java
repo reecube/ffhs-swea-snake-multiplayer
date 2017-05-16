@@ -1,15 +1,19 @@
-package ffhs.swea.client.logic;
+package ffhs.swea.server.logic;
 
-import ffhs.swea.client.model.*;
+import ffhs.swea.server.model.Food;
+import ffhs.swea.server.model.Grid;
+import ffhs.swea.server.model.Point;
+import ffhs.swea.server.model.Snake;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class Game {
+public class Game implements Runnable {
+    private GameLoop loop;
     private Grid grid;
 
     public Game(int cols, int rows) {
+        this.loop = new GameLoop(this);
         this.grid = new Grid(cols, rows);
     }
 
@@ -17,12 +21,8 @@ public class Game {
         return grid;
     }
 
-    public void reset() {
-        List<Point> points = new LinkedList<>();
-
-        points.add(new Point(grid.getCols() / 2, grid.getRows() / 2));
-
-        grid.reset(points.get(0), getRandomPoint(points));
+    public void start() {
+        (new Thread(loop)).start();
     }
 
     private Point wrap(Point point) {
@@ -46,29 +46,31 @@ public class Game {
         return point;
     }
 
-    public void update() {
-        if (grid.getFood().getPoint().equals(grid.getSnake().getHead())) {
-            extendSnake();
-            grid.getFood().setPoint(getRandomPoint(grid.getSnake().getPoints()));
-        } else {
-            moveSnake();
-        }
-    }
-
-    private void moveSnake() {
-        Snake snake = grid.getSnake();
-
+    private void moveSnake(Snake snake) {
         if (!snake.isStill()) {
             snake.addPoint(wrap(snake.translateHead()));
             snake.removeOldestPoint();
         }
     }
 
-    private void extendSnake() {
-        Snake snake = grid.getSnake();
-
+    private void extendSnake(Snake snake) {
         if (!snake.isStill()) {
             snake.addPoint(wrap(snake.translateHead()));
+        }
+    }
+
+    @Override
+    public void run() {
+        for (Snake snake:grid.getSnakes().values()) {
+            for (Food food:grid.getFoods()) {
+                if (food.getPoint().equals(snake.getHead())) {
+                    extendSnake(snake);
+                    food.setPoint(getRandomPoint(snake.getPoints()));
+                } else {
+                    moveSnake(snake);
+                    break;
+                }
+            }
         }
     }
 }

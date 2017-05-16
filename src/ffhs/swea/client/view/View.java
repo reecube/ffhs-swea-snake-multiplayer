@@ -1,8 +1,9 @@
 package ffhs.swea.client.view;
 
-import ffhs.swea.client.model.Grid;
-import ffhs.swea.client.model.Point;
-import ffhs.swea.client.model.Snake;
+import ffhs.swea.server.model.Food;
+import ffhs.swea.server.model.Grid;
+import ffhs.swea.server.model.Point;
+import ffhs.swea.server.model.Snake;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,6 +21,8 @@ public class View {
 
     private static final Color COLOR_GRID = Color.LIGHTGREEN;
     private static final Color COLOR_FOOD = Color.DARKRED;
+    private static final Color COLOR_ENEMY = Color.GRAY;
+    private static final Color COLOR_ENEMY_DEAD = Color.DARKGRAY;
     private static final Color COLOR_SNAKE = Color.GREEN;
     private static final Color COLOR_SNAKE_DEAD = Color.DARKGREEN;
     private static final Color COLOR_LABEL_SCORE = Color.DARKGREEN;
@@ -61,10 +64,6 @@ public class View {
         primaryStage.show();
     }
 
-    public void resetStage(Grid grid) {
-        paint(grid);
-    }
-
     public void paint(Grid grid) {
         int gridWidth = grid.getCols() * POINT_SIZE;
         int gridHeight = grid.getRows() * POINT_SIZE;
@@ -72,22 +71,32 @@ public class View {
         gc.setFill(COLOR_GRID);
         gc.fillRect(0, 0, gridWidth, gridHeight);
 
-        // Now the Food
         gc.setFill(COLOR_FOOD);
-        paintPoint(grid.getFood().getPoint());
-
-        // Now the snake
-        Snake snake = grid.getSnake();
-        gc.setFill(COLOR_SNAKE);
-        snake.getPoints().forEach(this::paintPoint);
-        if (!snake.isSafe()) {
-            gc.setFill(COLOR_SNAKE_DEAD);
-            paintPoint(snake.getHead());
+        for (Food food : grid.getFoods()) {
+            paintPoint(food.getPoint());
         }
 
-        // The score
-        gc.setFill(COLOR_LABEL_SCORE);
-        gc.fillText("Length : " + (snake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
+        gc.setFill(COLOR_ENEMY);
+        for (Snake snake : grid.getSnakes().values()) {
+            snake.getPoints().forEach(this::paintPoint);
+            if (!snake.isSafe()) {
+                gc.setFill(COLOR_ENEMY_DEAD);
+                paintPoint(snake.getHead());
+            }
+        }
+
+        Snake playerSnake = grid.getPlayerSnake();
+        if (playerSnake != null) {
+            gc.setFill(COLOR_SNAKE);
+            playerSnake.getPoints().forEach(this::paintPoint);
+            if (!playerSnake.isSafe()) {
+                gc.setFill(COLOR_SNAKE_DEAD);
+                paintPoint(playerSnake.getHead());
+            }
+
+            gc.setFill(COLOR_LABEL_SCORE);
+            gc.fillText("Length : " + (playerSnake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
+        }
     }
 
     private void paintPoint(Point point) {

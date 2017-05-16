@@ -1,83 +1,125 @@
 package ffhs.swea.client.controller;
 
-import ffhs.swea.client.logic.GameLoop;
-import ffhs.swea.client.logic.Game;
-import ffhs.swea.client.model.Snake;
 import ffhs.swea.client.view.View;
+import ffhs.swea.global.CommunicationInterface;
+import ffhs.swea.global.Connection;
+import ffhs.swea.global.ConnectionListener;
+import ffhs.swea.server.model.Grid;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import org.json.simple.JSONObject;
 
-public class Controller implements EventHandler<KeyEvent>, Runnable {
+import java.net.Socket;
+
+public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
+    private Connection connection;
+    private Grid grid;
+    private boolean started;
     private View view;
 
-    private GameLoop loop;
-    private Game game;
-
-    public Controller(int cols, int rows) {
-        this.loop = new GameLoop(this);
-        this.game = new Game(cols, rows);
-    }
-
-    public void start(Stage primaryStage) {
+    public Controller(Stage primaryStage, String host, int port) throws Exception {
+        this.connection = new Connection(this, new Socket(host, port));
+        this.grid = null;
+        this.started = false;
         this.view = new View(primaryStage);
-
-        view.initializeStage(game.getGrid().getCols(), game.getGrid().getRows());
-        view.registerKeyboardEvents(this);
-
-        reset();
-
-        view.showStage();
-
-        (new Thread(loop)).start();
     }
 
-    private void reset() {
-        game.reset();
-        view.resetStage(game.getGrid());
+    public void disconnect() throws Exception {
+        connection.sendMessage(CommunicationInterface.CLIENT_DISCONNECT);
+    }
 
-        loop.resume();
+    private void start() {
+        if (grid == null) {
+            throw new NullPointerException("The grid must not be null!");
+        }
+
+        if (started) {
+            System.err.println("You can't start the view multiple times!");
+            return;
+        }
+
+        this.started = true;
+
+        Platform.runLater(() -> {
+            view.initializeStage(grid.getCols(), grid.getRows());
+            view.registerKeyboardEvents(this);
+
+            view.showStage();
+        });
     }
 
     @Override
     public void handle(KeyEvent event) {
-        if (loop.isKeyPressed()) {
-            return;
-        }
-
-        Snake snake = game.getGrid().getSnake();
-
         switch (event.getCode()) {
             case UP:
-                snake.setUp();
+                // TODO
                 break;
             case DOWN:
-                snake.setDown();
+                // TODO
                 break;
             case LEFT:
-                snake.setLeft();
+                // TODO
                 break;
             case RIGHT:
-                snake.setRight();
+                // TODO
                 break;
             case ENTER:
-                if (loop.isPaused()) {
-                    reset();
-                }
+                // TODO
                 break;
         }
+    }
 
-        loop.setKeyPressed();
+    private void update() {
+        Platform.runLater(() -> view.paint(grid));
     }
 
     @Override
-    public void run() {
-        game.update();
-        view.paint(game.getGrid());
+    @SuppressWarnings("unchecked")
+    public void onObject(Connection connection, JSONObject object) {
+        Object type = object.getOrDefault(CommunicationInterface.DATA_KEY_TYPE, null);
 
-        if (!game.getGrid().getSnake().isSafe()) {
-            loop.pause();
-            view.paintResetMessage();
+        if (type == null) {
+            System.err.println("Could not parse `" + object.toJSONString() + "`!");
+            return;
         }
+
+        switch (type.toString()) {
+            case CommunicationInterface.DATA_TYPE_START:
+                int cols = Integer.parseInt(object.getOrDefault(CommunicationInterface.DATA_KEY_COLS, 0).toString());
+                int rows = Integer.parseInt(object.getOrDefault(CommunicationInterface.DATA_KEY_ROWS, 0).toString());
+
+                // TODO: handle <= 0
+
+                this.grid = new Grid(cols, rows);
+
+                start();
+
+                break;
+            case CommunicationInterface.DATA_TYPE_UPDATE:
+                // TODO: overwrite the variables
+
+                update();
+
+                break;
+            default:
+                System.err.println("Could not parse `" + object.toJSONString() + "`!");
+        }
+    }
+
+    @Override
+    public void onMessage(Connection connection, String message) {
+        System.out.println(message);
+    }
+
+    @Override
+    public void onError(Connection connection, String text) {
+        System.err.println("Could not parse `" + text + "`!");
+    }
+
+    @Override
+    public void onException(Connection connection, Exception ex) {
+        ex.printStackTrace();
     }
 }

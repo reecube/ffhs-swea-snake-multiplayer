@@ -1,4 +1,4 @@
-package ffhs.swea.client.model;
+package ffhs.swea.server.model;
 
 public class Point {
     private final int x;
