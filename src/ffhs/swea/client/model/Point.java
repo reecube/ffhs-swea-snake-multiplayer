@@ -4,7 +4,7 @@ public class Point {
     private final int x;
     private final int y;
 
-    Point(final int x, final int y) {
+    public Point(final int x, final int y) {
         this.x = x;
         this.y = y;
     }
@@ -17,7 +17,7 @@ public class Point {
         return y;
     }
 
-    Point translate(int dx, int dy) {
+    public Point translate(int dx, int dy) {
         return new Point(x + dx, y + dy);
     }
 

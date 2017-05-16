@@ -1,7 +1,7 @@
 package ffhs.swea.client.controller;
 
 import ffhs.swea.client.logic.GameLoop;
-import ffhs.swea.client.model.Grid;
+import ffhs.swea.client.logic.Game;
 import ffhs.swea.client.model.Snake;
 import ffhs.swea.client.view.View;
 import javafx.event.EventHandler;
@@ -12,17 +12,17 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
     private View view;
 
     private GameLoop loop;
-    private Grid grid;
+    private Game game;
 
     public Controller(int cols, int rows) {
         this.loop = new GameLoop(this);
-        this.grid = new Grid(cols, rows);
+        this.game = new Game(cols, rows);
     }
 
     public void start(Stage primaryStage) {
         this.view = new View(primaryStage);
 
-        view.initializeStage(grid.getCols(), grid.getRows());
+        view.initializeStage(game.getGrid().getCols(), game.getGrid().getRows());
         view.registerKeyboardEvents(this);
 
         reset();
@@ -33,13 +33,14 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
     }
 
     private void reset() {
-        grid.reset();
-        view.resetStage(grid);
+        game.reset();
+        view.resetStage(game.getGrid());
     }
 
     @Override
     public void handle(KeyEvent event) {
-        Snake snake = grid.getSnake();
+        Snake snake = game.getGrid().getSnake();
+
         switch (event.getCode()) {
             case UP:
                 snake.setUp();
@@ -63,10 +64,10 @@ public class Controller implements EventHandler<KeyEvent>, Runnable {
 
     @Override
     public void run() {
-        grid.update();
-        view.paint(grid);
+        game.update();
+        view.paint(game.getGrid());
 
-        if (!grid.getSnake().isSafe()) {
+        if (!game.getGrid().getSnake().isSafe()) {
             loop.pause();
             view.paintResetMessage();
         }

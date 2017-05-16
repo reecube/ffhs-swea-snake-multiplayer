@@ -3,7 +3,7 @@ package ffhs.swea.client.model;
 public class Food {
     private Point point;
 
-    Food(Point point) {
+    public Food(Point point) {
         this.point = point;
     }
 
@@ -11,7 +11,7 @@ public class Food {
         return point;
     }
 
-    void setPoint(Point point) {
+    public void setPoint(Point point) {
         this.point = point;
     }
 }
