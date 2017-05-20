@@ -60,7 +60,7 @@ public class Controller implements ConnectionListener {
         log(client, "connected");
     }
 
-    private void disconnectClient(Connection client) throws Exception {
+    private void disconnectClient(Connection client) {
         int clientHashCode = client.hashCode();
 
         clients.remove(clientHashCode);
