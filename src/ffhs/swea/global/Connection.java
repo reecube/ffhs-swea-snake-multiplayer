@@ -35,8 +35,7 @@ public class Connection implements Runnable {
 
     private void writeObject(ConnectionMessageType type, Object object) throws Exception {
         if (!clientSocket.isConnected()) {
-            System.err.println("Could not send `" + object + "`!");
-            return;
+            throw new Exception("Could not send `" + object + "`!");
         }
 
         ConnectionMessage cm = new ConnectionMessage(type, object.getClass(), gson.toJson(object));

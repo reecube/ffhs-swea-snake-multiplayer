@@ -8,18 +8,18 @@ import javafx.scene.input.KeyCode;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Controller implements ConnectionListener {
     private int port;
 
     private Game game;
-    private HashMap<Integer, Connection> clients;
+    private ConcurrentHashMap<Integer, Connection> clients;
 
     public Controller(int port, int cols, int rows) {
         this.port = port;
         this.game = new Game(this, cols, rows);
-        this.clients = new HashMap<>();
+        this.clients = new ConcurrentHashMap<>();
     }
 
     public void start() throws Exception {
@@ -70,12 +70,20 @@ public class Controller implements ConnectionListener {
         log(client, "disconnected");
     }
 
-    private void initializeClient(Connection client) throws Exception {
-        client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
+    private void initializeClient(Connection client) {
+        try {
+            client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
+        } catch (Exception ex) {
+            disconnectClient(client);
+        }
     }
 
-    private void updateClient(Connection client) throws Exception {
-        client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
+    private void updateClient(Connection client) {
+        try {
+            client.sendObject(new UpdateObject(client.hashCode(), game.getGrid()));
+        } catch (Exception ex) {
+            disconnectClient(client);
+        }
     }
 
     @Override
