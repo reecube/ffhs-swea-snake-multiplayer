@@ -81,14 +81,20 @@ public class Game implements Runnable {
     @Override
     public void run() {
         for (Snake snake : grid.getSnakes().values()) {
+            boolean extendSnake = false;
+
             for (Food food : grid.getFoods()) {
                 if (food.getPoint().equals(snake.getHead())) {
-                    extendSnake(snake);
                     food.setPoint(getRandomPoint(snake.getPoints()));
-                } else {
-                    moveSnake(snake);
-                    break;
+
+                    extendSnake = true;
                 }
+            }
+
+            if (extendSnake) {
+                extendSnake(snake);
+            } else {
+                moveSnake(snake);
             }
         }
 
