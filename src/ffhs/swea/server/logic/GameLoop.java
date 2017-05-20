@@ -28,7 +28,7 @@ package ffhs.swea.server.logic;
  * @version 2016.12.17
  */
 public class GameLoop implements Runnable {
-    private static final int FRAME_RATE = 20;
+    private static final int FRAME_RATE = 15;
 
     private Runnable caller;
 
