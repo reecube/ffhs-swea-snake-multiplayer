@@ -17,7 +17,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
-    public static final int PING_TIMEOUT = 3000;
+    private static final int PING_TIMEOUT = 3000;
 
     private Connection connection;
     private boolean started;
