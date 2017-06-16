@@ -60,7 +60,9 @@ public class Snake {
     }
 
     public void addPoint(Point point) {
-        safe = safe && !points.contains(point);
+        if (points.contains(point)) {
+            kill();
+        }
         points.add(point);
         head = point;
     }
