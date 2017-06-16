@@ -7,6 +7,11 @@ import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import javax.swing.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 
 public class Main extends Application implements EventHandler<WindowEvent> {
     private Controller controller;
@@ -21,7 +26,32 @@ public class Main extends Application implements EventHandler<WindowEvent> {
 
         primaryStage.setOnCloseRequest(this);
 
-        this.controller = new Controller(primaryStage, "localhost", 12345);
+        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        String host = JOptionPane.showInputDialog("Server address: ", hostAddress);
+
+        if (host == null) {
+            System.exit(0);
+        }
+
+        if (host.length() <= 0) {
+            host = "localhost";
+        }
+
+        try {
+            boolean isReachable = Controller.isReachable(host);
+
+            if (!isReachable) {
+                throw new IOException();
+            }
+
+            this.controller = new Controller(primaryStage, host, 12345);
+        } catch (UnknownHostException e) {
+            System.err.println("Unable to lookup `" + host + "`!");
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Unable to reach `" + host + "`!");
+            System.exit(1);
+        }
     }
 
     @Override

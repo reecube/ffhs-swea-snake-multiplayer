@@ -12,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
@@ -23,6 +25,11 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
         this.connection = new Connection(this, new Socket(host, port));
         this.started = false;
         this.view = new View(primaryStage);
+    }
+
+    public static boolean isReachable(String host) throws IOException {
+        InetAddress address = InetAddress.getByName(host);
+        return address.isReachable(1000);
     }
 
     public void disconnect() throws Exception {
