@@ -6,6 +6,7 @@ import ffhs.swea.server.logic.Game;
 import ffhs.swea.global.Connection;
 import javafx.scene.input.KeyCode;
 
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,7 @@ public class Controller implements ConnectionListener {
 
         ServerSocket serverSocket = new ServerSocket(port);
 
-        System.out.println("Server running...");
+        System.out.println("Server running on `" + InetAddress.getLocalHost().getHostAddress() + "`...");
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
