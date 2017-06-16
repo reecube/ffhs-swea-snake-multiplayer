@@ -17,6 +17,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
+    public static final int PING_TIMEOUT = 3000;
+
     private Connection connection;
     private boolean started;
     private View view;
@@ -29,7 +31,7 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
 
     public static boolean isReachable(String host) throws IOException {
         InetAddress address = InetAddress.getByName(host);
-        return address.isReachable(3000);
+        return address.isReachable(PING_TIMEOUT);
     }
 
     public void disconnect() throws Exception {
