@@ -44,7 +44,7 @@ public class Main extends Application implements EventHandler<WindowEvent> {
                 throw new IOException();
             }
 
-            this.controller = new Controller(primaryStage, host, 12345);
+            this.controller = new Controller(primaryStage, host, ffhs.swea.server.Main.SERVER_PORT);
         } catch (UnknownHostException e) {
             System.err.println("Unable to lookup `" + host + "`!");
             System.exit(1);

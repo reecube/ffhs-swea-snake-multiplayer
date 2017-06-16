@@ -3,11 +3,13 @@ package ffhs.swea.server;
 import ffhs.swea.server.controller.Controller;
 
 public class Main {
+    public static final int SERVER_PORT = 12345;
+
     private static final int COLS = 50;
     private static final int ROWS = 30;
 
     public static void main(String[] args) {
-        Controller server = new Controller(12345, COLS, ROWS);
+        Controller server = new Controller(SERVER_PORT, COLS, ROWS);
 
         try {
             server.start();
