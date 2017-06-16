@@ -4,17 +4,41 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Snake {
-    private transient boolean safe;
-    private List<Point> points;
+    private boolean safe;
+    private List<Point> points = null;
     private Point head;
-    private transient int xVelocity;
-    private transient int yVelocity;
+    private int xVelocity;
+    private int yVelocity;
 
     public Snake(Point initialPoint) {
-        points = new LinkedList<>();
+        reset(initialPoint);
+    }
+
+    public void reset() {
+        reset(null);
+    }
+
+    private void reset(Point initialPoint) {
+        if (initialPoint == null) {
+            initialPoint = head;
+        }
+
+        if (points == null) {
+            points = new LinkedList<>();
+        } else {
+            points.clear();
+        }
         points.add(initialPoint);
+
         head = initialPoint;
+
         safe = true;
+        xVelocity = 0;
+        yVelocity = 0;
+    }
+
+    public void kill() {
+        safe = false;
         xVelocity = 0;
         yVelocity = 0;
     }

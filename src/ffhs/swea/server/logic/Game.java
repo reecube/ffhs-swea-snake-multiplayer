@@ -98,6 +98,29 @@ public class Game implements Runnable {
             }
         }
 
+        for (Snake snake : grid.getSnakes().values()) {
+            if (!snake.isSafe()) {
+                continue;
+            }
+
+            insideSnakeLoop:
+            {
+                for (Snake enemy : grid.getSnakes().values()) {
+                    if (enemy.equals(snake) || !enemy.isSafe()) {
+                        continue;
+                    }
+
+                    for (Point enemyPoint : enemy.getPoints()) {
+                        if (enemyPoint.equals(snake.getHead())) {
+                            snake.kill();
+
+                            break insideSnakeLoop;
+                        }
+                    }
+                }
+            }
+        }
+
         controller.afterUpdate();
     }
 
@@ -118,6 +141,13 @@ public class Game implements Runnable {
             return;
         }
 
+        if (!snake.isSafe()) {
+            if (keyCode == KeyCode.ENTER) {
+                snake.reset();
+            }
+            return;
+        }
+
         switch (keyCode) {
             case UP:
                 snake.setUp();
@@ -130,9 +160,6 @@ public class Game implements Runnable {
                 break;
             case RIGHT:
                 snake.setRight();
-                break;
-            case ENTER:
-                // TODO
                 break;
         }
     }
