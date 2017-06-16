@@ -29,7 +29,7 @@ public class Controller implements EventHandler<KeyEvent>, ConnectionListener {
 
     public static boolean isReachable(String host) throws IOException {
         InetAddress address = InetAddress.getByName(host);
-        return address.isReachable(1000);
+        return address.isReachable(3000);
     }
 
     public void disconnect() throws Exception {
