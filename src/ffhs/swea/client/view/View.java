@@ -21,11 +21,12 @@ public class View {
 
     private static final Color COLOR_GRID = Color.LIGHTGREEN;
     private static final Color COLOR_FOOD = Color.DARKRED;
-    private static final Color COLOR_ENEMY = Color.GRAY;
-    private static final Color COLOR_ENEMY_DEAD = Color.DARKGRAY;
-    private static final Color COLOR_SNAKE = Color.GREEN;
-    private static final Color COLOR_SNAKE_DEAD = Color.DARKGREEN;
+    private static final Color COLOR_ENEMY = Color.color(0.5, 0.5, 0.5, 0.8);
+    private static final Color COLOR_ENEMY_DEAD = Color.color(1.0, 1.0, 1.0, 0.5);
+    private static final Color COLOR_SNAKE = Color.color(0, 0.5, 0, 0.8);
+    private static final Color COLOR_SNAKE_DEAD = Color.color(0, 0, 0.5, 0.8);
     private static final Color COLOR_LABEL_SCORE = Color.DARKGREEN;
+    private static final Color COLOR_OVERLAY_GAME_OVER = Color.color(1.0, 1.0, 1.0, 0.6);
     private static final Color COLOR_LABEL_GAME_OVER = Color.DARKRED;
 
     private Stage primaryStage;
@@ -76,26 +77,40 @@ public class View {
             paintPoint(food.getPoint());
         }
 
-        gc.setFill(COLOR_ENEMY);
+        Snake playerSnake = grid.getPlayerSnake();
+
         for (Snake snake : grid.getSnakes().values()) {
-            snake.getPoints().forEach(this::paintPoint);
-            if (!snake.isSafe()) {
-                gc.setFill(COLOR_ENEMY_DEAD);
-                paintPoint(snake.getHead());
+            if (snake.equals(playerSnake)) {
+                continue;
             }
+
+            if (snake.isSafe()) {
+                gc.setFill(COLOR_ENEMY);
+            } else {
+                gc.setFill(COLOR_ENEMY_DEAD);
+            }
+
+            snake.getPoints().forEach(this::paintPoint);
+            paintPoint(snake.getHead());
         }
 
-        Snake playerSnake = grid.getPlayerSnake();
-        if (playerSnake != null) {
-            gc.setFill(COLOR_SNAKE);
-            playerSnake.getPoints().forEach(this::paintPoint);
-            if (!playerSnake.isSafe()) {
-                gc.setFill(COLOR_SNAKE_DEAD);
-                paintPoint(playerSnake.getHead());
-            }
+        if (playerSnake == null) {
+            return;
+        }
 
-            gc.setFill(COLOR_LABEL_SCORE);
-            gc.fillText("Length : " + (playerSnake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
+        if (playerSnake.isSafe()) {
+            gc.setFill(COLOR_SNAKE);
+        } else {
+            gc.setFill(COLOR_SNAKE_DEAD);
+        }
+        playerSnake.getPoints().forEach(this::paintPoint);
+        paintPoint(playerSnake.getHead());
+
+        gc.setFill(COLOR_LABEL_SCORE);
+        gc.fillText("Length : " + (playerSnake.getPoints().size() - 1), POINT_SIZE, gridHeight - (POINT_SIZE + LABEL_OFFSET));
+
+        if (!playerSnake.isSafe()) {
+            paintResetMessage();
         }
     }
 
@@ -103,7 +118,10 @@ public class View {
         gc.fillRect(point.getX() * POINT_SIZE, point.getY() * POINT_SIZE, POINT_SIZE, POINT_SIZE);
     }
 
-    public void paintResetMessage() {
+    private void paintResetMessage() {
+        gc.setFill(COLOR_OVERLAY_GAME_OVER);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
         gc.setFill(COLOR_LABEL_GAME_OVER);
         gc.fillText("Hit RETURN to reset.", POINT_SIZE, POINT_SIZE + LABEL_OFFSET);
     }
